@@ -32,30 +32,6 @@ input_loop:
 input_end:
   jr ra
 
-sort:
-  beq s3, a1, end_sort
-  mv t3, s3
-  outer_loop:
-    beq t3, a1, end_sort
-    mv t5, t3
-    lw s1, (t3)
-    addi t3, t3, 4
-    inner_loop:
-      beq t3, a1, outer_loop
-      lw s0, (t3)
-      bgt s1, s0, swap
-      mv t5, t3
-      addi t3, t3, 4
-      j inner_loop
-  swap:
-    lw t6, 0(t5)
-    lw s5, 0(t3)
-    sw s5, 0(t5)
-    sw t6, 0(t3)
-    j outer_loop
-  end_sort:
-    jr ra
-
 main:
   read_int(t0)
   slli t1, t0, 2
@@ -65,8 +41,36 @@ main:
   mv a1, s3
   mv a2, t0
   jal input_array
-  jal sort
+  jal bubble_sort # Вызов функции bubble_sort
   jal output_array
+  
+  
+bubble_sort:
+  li s5, 0              # переменная для хранения временного значения
+  li s6, 4
+  mul s6, t0, s6
+  add t4, s3, s6 # вычисление верхней границы
+  addi t4, t4, -4
+  loop1:
+    mv t5, zero         # сброс флага отсортированности
+    mv t1, s3         # начало массива
+    loop2:
+      beq t1, t4, end_loop2 # если дошли до конца массива, заканчиваем
+      lw t2, 0(t1)      # текущий элемент массива
+      lw t3, 4(t1)      # следующий элемент массива
+      ble t2, t3, no_swap # если текущий элемент не больше следующего, не меняем местами
+      # иначе меняем местами
+      mv s5, t2
+      sw t3, 0(t1)
+      sw s5, 4(t1)
+      li t5, 1          # устанавливаем флаг отсортированности в 1
+      no_swap:
+        addi t1, t1, 4
+        j loop2
+
+  end_loop2:
+    bnez t5, loop1 
+    jr ra
 
 output_array:
   li t0, 0
