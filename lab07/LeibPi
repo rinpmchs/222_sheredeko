@@ -1,0 +1,81 @@
+	.data
+	
+neg_1: .double -1.0
+pos_1: .double 1.0
+zeeroo: .double 0.0
+pos_2: .double 2.0
+pos_4: .double 4.0
+
+iterations: .double 1e4
+
+	.text
+main:
+  li a7, 5
+  ecall
+  mv t0, a0  # n
+
+  fld ft1, zeeroo, t3  # pi
+  fld ft2, pos_1, t3
+  fld ft3, iterations, t3
+  fld ft4, pos_2, t3 
+  fld ft5, zeeroo, t3
+  fld ft6, neg_1, t3
+  fld ft7, pos_1, t3
+  fld ft8, pos_4, t3
+
+for:
+  feq.d t3, f3, ft5
+  bnez t3, end_for
+
+  fmul.d fs0, ft7, ft8
+  fmul.d fs1, ft4, ft5
+  fadd.d fs1, fs1, ft2 
+
+  fdiv.d fs2, fs0, fs1
+  fadd.d ft1, ft1, fs2
+
+  fmul.d ft7, ft7, ft6
+  fadd.d ft5, ft5, ft2  # counter++
+  j for
+
+end_for:
+  fmv.d fa0, ft1
+  mv a0, t0
+  jal fraction_truncate
+
+  li a7, 3
+  ecall
+
+  li a7, 11
+  li a0, '\n'
+  ecall
+
+  li a7, 10
+  ecall
+
+fraction_truncate:
+  beqz a0, int_ret
+  li t2, 10
+  li t3, 10
+  li t4, 1
+  mv t1, a0
+  j exp
+  
+cont:
+  fcvt.w.d a0, ft1
+  fcvt.d.w ft2, a0 
+  fdiv.d fa0, ft2, ft0
+  jalr zero, 0(ra)
+
+exp:
+  beqz t1, cont
+  fcvt.d.w ft0, t2 
+  fmul.d ft1, fa0, ft0
+  mul t2, t2, t3
+  addi t1, t1, -1
+  j exp
+
+int_ret:
+  fcvt.w.d a0, fa0
+  fcvt.d.w fa0, a0
+  jalr zero, 0(ra)
