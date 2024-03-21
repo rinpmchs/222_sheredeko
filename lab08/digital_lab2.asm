@@ -25,9 +25,9 @@
 
 .macro print_digit(%x, %y)
     li t1, %x
-    sb t1, 0x10(t3)
-    li t1, %y
     sb t1, 0x11(t3)
+    li t1, %y
+    sb t1, 0x10(t3)
 .end_macro
 
 .macro newline
@@ -188,5 +188,3 @@ pressed:
     	
 end:
 	exit
-
-
