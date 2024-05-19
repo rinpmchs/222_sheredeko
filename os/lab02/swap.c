@@ -1,21 +1,21 @@
 #include <stdio.h>
 
-void swap(int& a, int& b) {
-    a = a ^ b;
-    b = a ^ b;
-    a = a ^ b;
+void swap(int& x, int& y) {
+    x = x ^ y;
+    y = x ^ y;
+    x = x ^ y;
 }
 
 int main() {
-    int a, b;
-    printf("Enter a:\n");
-    scanf("%d", &a);
+    int x, y;
+    printf("Enter x: ");
+    scanf("%d", &x);
 
-    printf("Enter b:\n");
-    scanf("%d", &b);
+    printf("Enter y: ");
+    scanf("%d", &y);
 
-    swap(a, b);
+    swap(x, y);
 
-    printf("a = %d, b = %d\n", a, b);
+    printf("x = %d, y = %d\n", x, y);
     return 0;
 }
